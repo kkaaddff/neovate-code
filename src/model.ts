@@ -3,11 +3,6 @@ import type { LanguageModelV2 } from '@ai-sdk/provider';
 import assert from 'assert';
 import type { Context } from './context';
 
-export type ProviderInfo = {
-  id: string;
-  name: string;
-};
-
 export type ModelMeta = {
   id: string;
   reasoning: boolean;
@@ -18,7 +13,6 @@ export type ModelMeta = {
 };
 
 export type ModelInfo = {
-  provider: ProviderInfo;
   model: ModelMeta;
   m: LanguageModelV2;
 };
@@ -26,25 +20,10 @@ export type ModelInfo = {
 const DEFAULT_LIMIT = { context: 128_000, output: 8_192 };
 
 const BUILTIN_MODELS: Record<string, ModelMeta> = {
-  'gpt-4o': {
-    id: 'gpt-4o',
+  'glm-4.6': {
+    id: 'glm-4.6',
     reasoning: false,
     limit: DEFAULT_LIMIT,
-  },
-  'gpt-4o-mini': {
-    id: 'gpt-4o-mini',
-    reasoning: false,
-    limit: { context: 128_000, output: 6_000 },
-  },
-  'o4-mini': {
-    id: 'o4-mini',
-    reasoning: true,
-    limit: { context: 160_000, output: 16_000 },
-  },
-  'o3-mini': {
-    id: 'o3-mini',
-    reasoning: true,
-    limit: { context: 128_000, output: 8_000 },
   },
 };
 
@@ -76,10 +55,6 @@ async function createOpenAIModel(modelId: string): Promise<ModelInfo> {
     baseURL: process.env.OPENAI_BASE_URL,
   });
   return {
-    provider: {
-      id: 'openai',
-      name: 'OpenAI',
-    },
     model: resolveModelMeta(modelId),
     m: client.chat(modelId),
   };

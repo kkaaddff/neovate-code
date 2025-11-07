@@ -21,16 +21,5 @@ export function getThinkingConfig(
     };
   }
 
-  if (model.provider.id === 'google') {
-    return {
-      providerOptions: {
-        google: {
-          thinkingConfig: {
-            thinkingBudget: reasoningEffort === 'low' ? 1024 : 31999,
-            includeThoughts: true,
-          },
-        },
-      },
-    };
-  }
+  return undefined;
 }

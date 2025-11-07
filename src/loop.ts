@@ -385,7 +385,7 @@ export async function runLoop(opts: RunLoopOpts): Promise<LoopResult> {
       startTime,
       endTime,
     });
-    const model = `${opts.model.provider.id}/${opts.model.model.id}`;
+    const model = opts.model.model.id;
     const assistantContent: AssistantContent = [];
     if (reasoning) {
       assistantContent.push({
