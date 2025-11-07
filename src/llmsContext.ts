@@ -2,7 +2,6 @@ import fs from 'fs';
 import path from 'pathe';
 import { platform } from 'process';
 import type { Context } from './context';
-import { PluginHookType } from './plugin';
 import { getLlmsRules } from './rules';
 import { createLSTool } from './tools/ls';
 import { getGitStatus, getLlmGitStatus } from './utils/git';
@@ -61,17 +60,6 @@ ${result.llmContent}
       llmsContext.readme = fs.readFileSync(readmePath, 'utf-8');
     }
 
-    llmsContext = await opts.context.apply({
-      hook: 'context',
-      args: [
-        {
-          sessionId: opts.sessionId,
-          userPrompt: opts.userPrompt,
-        },
-      ],
-      memo: llmsContext,
-      type: PluginHookType.SeriesMerge,
-    });
     const llmsContextStr = `
 # Context
 As you answer the user's questions, you can use the following context:
@@ -86,17 +74,6 @@ ${Object.entries(llmsContext)
       Platform: platform,
       "Today's date": new Date().toLocaleDateString(),
     };
-    llmsEnv = await opts.context.apply({
-      hook: 'env',
-      args: [
-        {
-          sessionId: opts.sessionId,
-          userPrompt: opts.userPrompt,
-        },
-      ],
-      memo: llmsEnv,
-      type: PluginHookType.SeriesMerge,
-    });
     const llmsEnvStr = `
 # Environment
 Here is useful information about the environment you are running in.

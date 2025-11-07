@@ -3,7 +3,6 @@ export const PRODUCT_ASCII_ART = `
 █▄ █ █▀▀ █▀█ █ █ ▄▀█ ▀█▀ █▀▀
 █ ▀█ ██▄ █▄█ ▀▄▀ █▀█  █  ██▄
 `.trim();
-export const DEFAULT_OUTPUT_STYLE_NAME = 'Default';
 export const IMAGE_EXTENSIONS = new Set([
   '.png',
   '.jpg',
@@ -24,12 +23,6 @@ export enum TOOL_NAMES {
   BASH_OUTPUT = 'bash_output',
   KILL_BASH = 'kill_bash',
 }
-
-export const BASH_EVENTS = {
-  PROMPT_BACKGROUND: 'bash:prompt_background',
-  MOVE_TO_BACKGROUND: 'bash:move_to_background',
-  BACKGROUND_MOVED: 'bash:background_moved',
-} as const;
 
 // Reserve 20% buffer for small models
 export const MIN_TOKEN_THRESHOLD = 32_000 * 0.8;

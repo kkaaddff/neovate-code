@@ -3,7 +3,6 @@ import fs from 'fs';
 import { homedir } from 'os';
 import path from 'pathe';
 import { mergeBrowserMcpServers } from './browser';
-import type { Provider } from './model';
 
 export type McpStdioServerConfig = {
   type: 'stdio';
@@ -36,8 +35,6 @@ export type CommitConfig = {
   systemPrompt?: string;
 };
 
-export type ProviderConfig = Partial<Omit<Provider, 'createModel'>>;
-
 export type Config = {
   model: string;
   planModel: string;
@@ -45,9 +42,7 @@ export type Config = {
   language: string;
   quiet: boolean;
   approvalMode: ApprovalMode;
-  plugins: string[];
   mcpServers: Record<string, McpServerConfig>;
-  provider?: Record<string, ProviderConfig>;
   systemPrompt?: string;
   todo?: boolean;
   /**
@@ -58,8 +53,6 @@ export type Config = {
    */
   autoCompact?: boolean;
   commit?: CommitConfig;
-  outputStyle?: string;
-  outputFormat?: 'text' | 'stream-json' | 'json';
   autoUpdate?: boolean;
   browser?: boolean;
 };
@@ -68,12 +61,9 @@ const DEFAULT_CONFIG: Partial<Config> = {
   language: 'English',
   quiet: false,
   approvalMode: 'default',
-  plugins: [],
   mcpServers: {},
-  provider: {},
   todo: true,
   autoCompact: true,
-  outputFormat: 'text',
   autoUpdate: true,
   browser: false,
 };
@@ -86,13 +76,11 @@ const VALID_CONFIG_KEYS = [
   'todo',
   'autoCompact',
   'commit',
-  'outputStyle',
   'autoUpdate',
-  'provider',
   'browser',
 ];
-const ARRAY_CONFIG_KEYS = ['plugins'];
-const OBJECT_CONFIG_KEYS = ['mcpServers', 'commit', 'provider'];
+const ARRAY_CONFIG_KEYS: string[] = [];
+const OBJECT_CONFIG_KEYS = ['mcpServers', 'commit'];
 const BOOLEAN_CONFIG_KEYS = [
   'quiet',
   'todo',
@@ -203,10 +191,11 @@ export class ConfigManager {
         throw new Error(`Invalid config key: ${key}`);
       }
 
-      if (values) {
-        (config[key as keyof Config] as any) = (
-          config[key as keyof Config] as string[]
+      if (values && ARRAY_CONFIG_KEYS.includes(key)) {
+        const existingValues = (
+          (config[key as keyof Config] as unknown as string[]) || []
         ).filter((v) => !values.includes(v));
+        (config[key as keyof Config] as unknown) = existingValues;
       } else {
         delete config[key as keyof Config];
       }
@@ -222,10 +211,9 @@ export class ConfigManager {
     const config = global ? this.globalConfig : this.projectConfig;
     const configPath = global ? this.globalConfigPath : this.projectConfigPath;
     if (ARRAY_CONFIG_KEYS.includes(key)) {
-      (config[key as keyof Config] as any) = [
-        ...((config[key as keyof Config] as string[]) || []),
-        ...values,
-      ];
+      const currentValues =
+        (config[key as keyof Config] as unknown as string[]) || [];
+      (config[key as keyof Config] as unknown) = [...currentValues, ...values];
     } else if (OBJECT_CONFIG_KEYS.includes(key)) {
       (config[key as keyof Config] as any) = {
         ...(config[key as keyof Config] as Record<string, McpServerConfig>),

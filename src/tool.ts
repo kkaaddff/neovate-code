@@ -45,7 +45,6 @@ export async function resolveTools(opts: ResolveToolsOpts) {
         createBashTool({
           cwd,
           backgroundTaskManager: opts.context.backgroundTaskManager,
-          messageBus: opts.context.messageBus,
         }),
       ]
     : [];
